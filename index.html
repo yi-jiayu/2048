@@ -96,19 +96,17 @@
     }
   }
 
-  function collapse(row) {
-    row = row.filter(x => x !== null);
-    for (let i = 0; i < row.length - 1; i++) {
-      if (row[i] === row[i + 1]) {
-        row[i] += row[i + 1];
-        row[i + 1] = null;
-      }
+  function mergeCells(row, next) {
+    if (next === row[row.length - 1]) {
+      row[row.length - 1] += next;
+    } else if (next !== null) {
+      row.push(next);
     }
-    row = row.filter(x => x !== null);
     return row;
   }
 
-  function padRight(row) {
+  function collapseLeft(row) {
+    row = row.reduce(mergeCells, []);
     if (row.length < 4) {
       const oldLength = row.length;
       row.length = 4;
@@ -117,7 +115,8 @@
     return row;
   }
 
-  function padLeft(row) {
+  function collapseRight(row) {
+    row = row.reduceRight(mergeCells, []);
     while (row.length < 4) {
       row.unshift(null);
     }
@@ -126,13 +125,13 @@
 
   function moveLeft() {
     for (let i = 0; i < 4; i++) {
-      board[i] = padRight(collapse(board[i]));
+      board[i] = collapseLeft(board[i]);
     }
   }
 
   function moveRight() {
     for (let i = 0; i < 4; i++) {
-      board[i] = padLeft(collapse(board[i]));
+      board[i] = collapseRight(board[i]);
     }
   }
 
@@ -142,7 +141,7 @@
       for (let row = 0; row < 4; row++) {
         col.push(board[row][i]);
       }
-      col = padRight(collapse(col));
+      col = collapseLeft(col);
       for (let row = 0; row < 4; row++) {
         board[row][i] = col[row];
       }
@@ -155,7 +154,7 @@
       for (let row = 0; row < 4; row++) {
         col.push(board[row][i]);
       }
-      col = padLeft(collapse(col));
+      col = collapseRight(col);
       for (let row = 0; row < 4; row++) {
         board[row][i] = col[row];
       }
