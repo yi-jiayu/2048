@@ -55,10 +55,14 @@
     <td></td>
   </tr>
 </table>
-<button id="newGame">New game</button>
+<div>
+  <button id="newGame">New game</button>
+  <button id="undo" disabled>Undo</button>
+</div>
 <script>
   let board;
   let boardChanged;
+  let previous;
 
   function newGame() {
     board = [
@@ -108,6 +112,15 @@
     let [row, col] = emptySquares[random];
     board[row][col] = Math.random() < 0.9 ? 2 : 4;
     boardChanged = false;
+  }
+
+  function undo() {
+    if (!previous) return;
+    board = previous;
+    previous = null;
+    document.getElementById('undo').disabled = true;
+    displayBoard();
+    displayScore();
   }
 
   function rowChanged(before, after) {
@@ -190,6 +203,35 @@
     document.getElementById('score').textContent = calculateScore();
   }
 
+  function move(direction) {
+    const maybePrevious = board.map(row => row.slice());
+    switch (direction) {
+      case 'Left':
+        moveLeft();
+        break;
+      case 'Right':
+        moveRight();
+        break;
+      case 'Up':
+        moveUp();
+        break;
+      case 'Down':
+        moveDown();
+        break;
+      default:
+        return;
+    }
+    if (boardChanged) {
+      previous = maybePrevious;
+      document.getElementById('undo').disabled = false;
+    }
+    try {
+      update();
+    } catch (e) {
+      alert('Game over!');
+    }
+  }
+
   function update() {
     addNewTile();
     displayBoard();
@@ -199,24 +241,19 @@
   document.addEventListener('keyup', function (e) {
     switch (e.code) {
       case 'ArrowLeft':
-        moveLeft();
+        move('Left');
         break;
       case 'ArrowRight':
-        moveRight();
+        move('Right')
         break;
       case 'ArrowUp':
-        moveUp();
+        move('Up')
         break;
       case 'ArrowDown':
-        moveDown();
+        move('Down')
         break;
       default:
         return;
-    }
-    try {
-      update();
-    } catch (e) {
-      alert('Game over!');
     }
   });
 
@@ -246,31 +283,15 @@
         swipeDirection = 'Up';
       }
     }
-    switch (swipeDirection) {
-      case 'Left':
-        moveLeft();
-        break;
-      case 'Right':
-        moveRight();
-        break;
-      case 'Up':
-        moveUp();
-        break;
-      case 'Down':
-        moveDown();
-        break;
-      default:
-        return;
-    }
-    try {
-      update();
-    } catch (e) {
-      alert('Game over!');
-    }
+    move(swipeDirection);
   });
 
   document.getElementById('newGame').addEventListener('click', function () {
     newGame();
+  });
+
+  document.getElementById('undo').addEventListener('click', function () {
+    undo();
   })
 
   newGame();
