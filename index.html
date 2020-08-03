@@ -96,7 +96,7 @@
     }
   }
 
-  function collapseLeft(row) {
+  function collapse(row) {
     row = row.filter(x => x !== null);
     for (let i = 0; i < row.length - 1; i++) {
       if (row[i] === row[i + 1]) {
@@ -105,6 +105,10 @@
       }
     }
     row = row.filter(x => x !== null);
+    return row;
+  }
+
+  function padRight(row) {
     if (row.length < 4) {
       const oldLength = row.length;
       row.length = 4;
@@ -113,9 +117,22 @@
     return row;
   }
 
+  function padLeft(row) {
+    while (row.length < 4) {
+      row.unshift(null);
+    }
+    return row;
+  }
+
   function moveLeft() {
     for (let i = 0; i < 4; i++) {
-      board[i] = collapseLeft(board[i]);
+      board[i] = padRight(collapse(board[i]));
+    }
+  }
+
+  function moveRight() {
+    for (let i = 0; i < 4; i++) {
+      board[i] = padLeft(collapse(board[i]));
     }
   }
 
@@ -123,6 +140,9 @@
     switch (e.code) {
       case 'ArrowLeft':
         moveLeft();
+        break;
+      case 'ArrowRight':
+        moveRight();
         break;
       default:
         return;
