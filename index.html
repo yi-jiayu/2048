@@ -62,7 +62,7 @@
     let i = 0;
     for (const row of board) {
       for (const value of row) {
-        if (value) {
+        if (value !== null) {
           cells[i].textContent = value;
         } else {
           cells[i].textContent = '';
@@ -99,10 +99,11 @@
   }
 
   function mergeCells(row, next) {
+    if (next === null) return row;
     if (next === row[row.length - 1]) {
       row[row.length - 1] += next;
       row.push(null);
-    } else if (next !== null) {
+    } else {
       row.push(next);
     }
     return row;
