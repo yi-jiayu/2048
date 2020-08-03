@@ -50,12 +50,20 @@
   </tr>
 </table>
 <script>
-  let board = [
-    [null, null, null, null],
-    [null, null, null, null],
-    [null, null, null, null],
-    [null, null, null, null],
-  ];
+  let board;
+  let boardChanged;
+
+  function newGame() {
+    board = [
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+      [null, null, null, null],
+    ];
+    boardChanged = true;
+    addNewTile();
+    displayBoard();
+  }
 
   function displayBoard() {
     const cells = document.querySelectorAll('td');
@@ -89,6 +97,7 @@
     if (emptySquares.length === 0) {
       throw 'Game over!';
     }
+    if (!boardChanged) return;
     let random = getRandomInt(0, emptySquares.length);
     let [row, col] = emptySquares[random];
     if (Math.random() < 0.5) {
@@ -96,6 +105,11 @@
     } else {
       board[row][col] = 4;
     }
+    boardChanged = false;
+  }
+
+  function rowChanged(before, after) {
+    return before.join() !== after.join();
   }
 
   function mergeCells(row, next) {
@@ -110,6 +124,7 @@
   }
 
   function collapseLeft(row) {
+    const before = row.slice();
     row = row.reduce(mergeCells, []);
     row = row.filter(x => x != null);
     if (row.length < 4) {
@@ -117,15 +132,22 @@
       row.length = 4;
       row.fill(null, oldLength);
     }
+    if (rowChanged(before, row)) {
+      boardChanged = true;
+    }
     return row;
   }
 
   function collapseRight(row) {
+    const before = row.slice();
     row = row.reduceRight(mergeCells, []);
     row = row.reverse();
     row = row.filter(x => x != null);
     while (row.length < 4) {
       row.unshift(null);
+    }
+    if (rowChanged(before, row)) {
+      boardChanged = true;
     }
     return row;
   }
@@ -180,18 +202,11 @@
       displayBoard();
     } catch (e) {
       alert('Game over!');
-      board = [
-        [null, null, null, null],
-        [null, null, null, null],
-        [null, null, null, null],
-        [null, null, null, null],
-      ];
-      displayBoard();
+      newGame();
     }
   })
 
-  addNewTile();
-  displayBoard();
+  newGame();
 </script>
 </body>
 </html>
