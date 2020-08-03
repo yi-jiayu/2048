@@ -101,6 +101,7 @@
   function mergeCells(row, next) {
     if (next === row[row.length - 1]) {
       row[row.length - 1] += next;
+      row.push(null);
     } else if (next !== null) {
       row.push(next);
     }
@@ -109,6 +110,7 @@
 
   function collapseLeft(row) {
     row = row.reduce(mergeCells, []);
+    row = row.filter(x => x != null);
     if (row.length < 4) {
       const oldLength = row.length;
       row.length = 4;
@@ -119,6 +121,8 @@
 
   function collapseRight(row) {
     row = row.reduceRight(mergeCells, []);
+    row = row.reverse();
+    row = row.filter(x => x != null);
     while (row.length < 4) {
       row.unshift(null);
     }
