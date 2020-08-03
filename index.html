@@ -126,23 +126,16 @@
   }
 
   function moveLeft() {
-    for (let i = 0; i < 4; i++) {
-      board[i] = collapseLeft(board[i]);
-    }
+    board = board.map(collapseLeft)
   }
 
   function moveRight() {
-    for (let i = 0; i < 4; i++) {
-      board[i] = collapseRight(board[i]);
-    }
+    board = board.map(collapseRight)
   }
 
   function moveUp() {
     for (let i = 0; i < 4; i++) {
-      let col = [];
-      for (let row = 0; row < 4; row++) {
-        col.push(board[row][i]);
-      }
+      let col = board.map(row => row[i]);
       col = collapseLeft(col);
       for (let row = 0; row < 4; row++) {
         board[row][i] = col[row];
@@ -152,10 +145,7 @@
 
   function moveDown() {
     for (let i = 0; i < 4; i++) {
-      let col = [];
-      for (let row = 0; row < 4; row++) {
-        col.push(board[row][i]);
-      }
+      let col = board.map(row => row[i]);
       col = collapseRight(col);
       for (let row = 0; row < 4; row++) {
         board[row][i] = col[row];
