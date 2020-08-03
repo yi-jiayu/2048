@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>2048</title>
+
+  <style>
+    table {
+      border: 1px solid black;
+    }
+
+    th, td {
+      border: 1px solid black;
+    }
+
+    td {
+      width: 100px;
+      height: 100px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<table>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+<script>
+  let board = [
+    [null, null, null, null],
+    [null, null, null, null],
+    [null, null, null, null],
+    [null, null, null, null],
+  ];
+
+  function displayBoard() {
+    const cells = document.querySelectorAll('td');
+    let i = 0;
+    for (const row of board) {
+      for (const value of row) {
+        if (value) {
+          cells[i].textContent = value;
+        } else {
+          cells[i].textContent = '';
+        }
+        i++;
+      }
+    }
+  }
+
+  // Adapted from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#Getting_a_random_integer_between_two_values
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+  }
+
+  function addNewTile() {
+    const emptySquares = [];
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 4; j++) {
+        if (!board[i][j]) {
+          emptySquares.push([i, j]);
+        }
+      }
+    }
+    if (emptySquares.length === 0) {
+      throw 'Game over!';
+    }
+    let random = getRandomInt(0, emptySquares.length);
+    let [row, col] = emptySquares[random];
+    if (Math.random() < 0.5) {
+      board[row][col] = 2;
+    } else {
+      board[row][col] = 4;
+    }
+  }
+
+  function collapseLeft(row) {
+    row = row.filter(x => x !== null);
+    for (let i = 0; i < row.length - 1; i++) {
+      if (row[i] === row[i + 1]) {
+        row[i] += row[i + 1];
+        row[i + 1] = null;
+      }
+    }
+    row = row.filter(x => x !== null);
+    if (row.length < 4) {
+      const oldLength = row.length;
+      row.length = 4;
+      row.fill(null, oldLength);
+    }
+    return row;
+  }
+
+  function moveLeft() {
+    for (let i = 0; i < 4; i++) {
+      board[i] = collapseLeft(board[i]);
+    }
+  }
+
+  document.addEventListener('keyup', function (e) {
+    console.log(e.code)
+    switch (e.code) {
+      case 'ArrowLeft':
+        moveLeft();
+        break;
+      default:
+        return;
+    }
+    addNewTile();
+    displayBoard();
+  })
+
+  addNewTile();
+  displayBoard();
+</script>
+</body>
+</html>
