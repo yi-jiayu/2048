@@ -28,6 +28,7 @@
   </style>
 </head>
 <body>
+<div>Score: <span id="score"></span></div>
 <table>
   <tr>
     <td></td>
@@ -60,14 +61,13 @@
 
   function newGame() {
     board = [
-      [null, null, null, null],
-      [null, null, null, null],
-      [null, null, null, null],
-      [null, null, null, null],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
     ];
     boardChanged = true;
-    addNewTile();
-    displayBoard();
+    update();
   }
 
   function displayBoard() {
@@ -75,7 +75,7 @@
     let i = 0;
     for (const row of board) {
       for (const value of row) {
-        if (value !== null) {
+        if (value !== 0) {
           cells[i].textContent = value;
         } else {
           cells[i].textContent = '';
@@ -114,10 +114,10 @@
   }
 
   function mergeCells(row, next) {
-    if (next === null) return row;
+    if (next === 0) return row;
     if (next === row[row.length - 1]) {
       row[row.length - 1] += next;
-      row.push(null);
+      row.push(0);
     } else {
       row.push(next);
     }
@@ -127,11 +127,11 @@
   function collapseLeft(row) {
     const before = row.slice();
     row = row.reduce(mergeCells, []);
-    row = row.filter(x => x != null);
+    row = row.filter(x => x !== 0);
     if (row.length < 4) {
       const oldLength = row.length;
       row.length = 4;
-      row.fill(null, oldLength);
+      row.fill(0, oldLength);
     }
     if (rowChanged(before, row)) {
       boardChanged = true;
@@ -143,9 +143,9 @@
     const before = row.slice();
     row = row.reduceRight(mergeCells, []);
     row = row.reverse();
-    row = row.filter(x => x != null);
+    row = row.filter(x => x !== 0);
     while (row.length < 4) {
-      row.unshift(null);
+      row.unshift(0);
     }
     if (rowChanged(before, row)) {
       boardChanged = true;
@@ -181,6 +181,20 @@
     }
   }
 
+  function calculateScore() {
+    return board.reduce((score, row) => score + row.reduce((score, value) => score + value), 0);
+  }
+
+  function displayScore() {
+    document.getElementById('score').textContent = calculateScore();
+  }
+
+  function update() {
+    addNewTile();
+    displayBoard();
+    displayScore();
+  }
+
   document.addEventListener('keyup', function (e) {
     switch (e.code) {
       case 'ArrowLeft':
@@ -199,8 +213,7 @@
         return;
     }
     try {
-      addNewTile();
-      displayBoard();
+      update();
     } catch (e) {
       alert('Game over!');
       newGame();
@@ -250,8 +263,7 @@
         return;
     }
     try {
-      addNewTile();
-      displayBoard();
+      update();
     } catch (e) {
       alert('Game over!');
       newGame();
