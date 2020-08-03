@@ -19,6 +19,7 @@
       width: 100px;
       height: 100px;
       text-align: center;
+      font-size: 24px;
     }
   </style>
 </head>
@@ -100,11 +101,7 @@
     if (!boardChanged) return;
     let random = getRandomInt(0, emptySquares.length);
     let [row, col] = emptySquares[random];
-    if (Math.random() < 0.5) {
-      board[row][col] = 2;
-    } else {
-      board[row][col] = 4;
-    }
+    board[row][col] = Math.random() < 0.9 ? 2 : 4;
     boardChanged = false;
   }
 
