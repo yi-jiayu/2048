@@ -136,6 +136,32 @@
     }
   }
 
+  function moveUp() {
+    for (let i = 0; i < 4; i++) {
+      let col = [];
+      for (let row = 0; row < 4; row++) {
+        col.push(board[row][i]);
+      }
+      col = padRight(collapse(col));
+      for (let row = 0; row < 4; row++) {
+        board[row][i] = col[row];
+      }
+    }
+  }
+
+  function moveDown() {
+    for (let i = 0; i < 4; i++) {
+      let col = [];
+      for (let row = 0; row < 4; row++) {
+        col.push(board[row][i]);
+      }
+      col = padLeft(collapse(col));
+      for (let row = 0; row < 4; row++) {
+        board[row][i] = col[row];
+      }
+    }
+  }
+
   document.addEventListener('keyup', function (e) {
     switch (e.code) {
       case 'ArrowLeft':
@@ -143,6 +169,12 @@
         break;
       case 'ArrowRight':
         moveRight();
+        break;
+      case 'ArrowUp':
+        moveUp();
+        break;
+      case 'ArrowDown':
+        moveDown();
         break;
       default:
         return;
