@@ -120,7 +120,6 @@
   }
 
   document.addEventListener('keyup', function (e) {
-    console.log(e.code)
     switch (e.code) {
       case 'ArrowLeft':
         moveLeft();
@@ -128,8 +127,19 @@
       default:
         return;
     }
-    addNewTile();
-    displayBoard();
+    try {
+      addNewTile();
+      displayBoard();
+    } catch (e) {
+      alert('Game over!');
+      board = [
+        [null, null, null, null],
+        [null, null, null, null],
+        [null, null, null, null],
+        [null, null, null, null],
+      ];
+      displayBoard();
+    }
   })
 
   addNewTile();
