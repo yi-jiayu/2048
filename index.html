@@ -201,7 +201,58 @@
       alert('Game over!');
       newGame();
     }
+  });
+
+  let startX, startY;
+
+  document.addEventListener('touchstart', function (e) {
+    const touch = e.changedTouches[0];
+    startX = touch.pageX;
+    startY = touch.pageY;
   })
+
+  document.addEventListener('touchend', function (e) {
+    const touch = e.changedTouches[0];
+    const deltaX = touch.pageX - startX;
+    const deltaY = touch.pageY - startY;
+    let swipeDirection;
+    if (Math.abs(deltaX) > 2 * Math.abs(deltaY)) {
+      if (deltaX > 0) {
+        swipeDirection = 'Right';
+      } else {
+        swipeDirection = 'Left';
+      }
+    } else if (Math.abs(deltaY) > 2 * Math.abs(deltaX)) {
+      if (deltaY > 0) {
+        swipeDirection = 'Down';
+      } else {
+        swipeDirection = 'Up';
+      }
+    }
+    switch (swipeDirection) {
+      case 'Left':
+        moveLeft();
+        break;
+      case 'Right':
+        moveRight();
+        break;
+      case 'Up':
+        moveUp();
+        break;
+      case 'Down':
+        moveDown();
+        break;
+      default:
+        return;
+    }
+    try {
+      addNewTile();
+      displayBoard();
+    } catch (e) {
+      alert('Game over!');
+      newGame();
+    }
+  });
 
   newGame();
 </script>
