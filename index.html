@@ -55,6 +55,7 @@
     <td></td>
   </tr>
 </table>
+<button id="newGame">New game</button>
 <script>
   let board;
   let boardChanged;
@@ -216,7 +217,6 @@
       update();
     } catch (e) {
       alert('Game over!');
-      newGame();
     }
   });
 
@@ -266,9 +266,12 @@
       update();
     } catch (e) {
       alert('Game over!');
-      newGame();
     }
   });
+
+  document.getElementById('newGame').addEventListener('click', function () {
+    newGame();
+  })
 
   newGame();
 </script>
